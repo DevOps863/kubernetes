@@ -30,4 +30,39 @@ data:
     mepass: YWRtaW4xMjM=
 
 ---
-
+apiVersion: v1
+kind: Deployment 
+metadata:
+    name:  mongodb 
+    labels:
+       app: mongodb
+spec:
+  replicas: 1
+  selector:
+  #matchlabels tell the kuberentes to match the pods based on their lables
+     matchlabels: 
+     #the Deployment will match pods that have the label app: mongodb
+          app: mongodb
+  #Template provides the configuration for the creation of the pod
+  template: 
+      metadata:
+         labels:
+           app: mongodb
+      spec:
+         containers:
+           - name:  mongodb
+             image: mongo 
+             ports:
+                - containerPort: 27017
+             env: 
+               - name: MONGO_INITDB_ROOT_USERNAME
+                 valueFrom:
+                    secretKeyRef:
+                       name: Mongodb-secret
+                       key: username
+               - name: MONGO_INITDB_ROOT_PASSWORD
+                 valueFrom:
+                     secretKeyRef:
+                         name: Mongodb-secret
+                         key: password 
+           
