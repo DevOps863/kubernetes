@@ -7,62 +7,67 @@ data:
   db_host: mongodb-service
 
 ---
-
 apiVersion: v1
-kind: secret 
+kind: secret
 metadata:
-     name:  Mongodb-secret
+  name: Mongodb-secret
 type: opaque
 data:
-   username: YWRtaW4=
-   password: YWRtaW4xMjM=
+  username: YWRtaW4=
+  password: YWRtaW4xMjM=
 
 ---
 apiVersion: v1
-kind: secret 
+kind: secret
 metadata:
-     name:  mongoexpress-secret
+  name: mongoexpress-secret
 type: opaque
 data:
-    mduser: YWRtaW4=
-    mdpass: YWRtaW4xMjM=
-    meuser: YWRtaW4=
-    mepass: YWRtaW4xMjM=
+  mduser: YWRtaW4=
+  mdpass: YWRtaW4xMjM=
+  meuser: YWRtaW4=
+  mepass: YWRtaW4xMjM=
 
 ---
 apiVersion: v1
-kind: Deployment 
+kind: Deployment
 metadata:
-    name:  mongodb 
-    labels:
-       app: mongodb
+  name: mongodb
+  labels:
+    app: mongodb
 spec:
   replicas: 1
   selector:
-  #matchlabels tell the kuberentes to match the pods based on their lables
-     matchlabels: 
-     #the Deployment will match pods that have the label app: mongodb
-          app: mongodb
-  #Template provides the configuration for the creation of the pod
-  template: 
-      metadata:
-         labels:
-           app: mongodb
-      spec:
-         containers:
-           - name:  mongodb
-             image: mongo 
-             ports:
-                - containerPort: 27017
-             env: 
-               - name: MONGO_INITDB_ROOT_USERNAME
-                 valueFrom:
-                    secretKeyRef:
-                       name: Mongodb-secret
-                       key: username
-               - name: MONGO_INITDB_ROOT_PASSWORD
-                 valueFrom:
-                     secretKeyRef:
-                         name: Mongodb-secret
-                         key: password 
-           
+    matchlabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: Mongodb-secret
+                  key: username
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: Mongodb-secret
+                  key: password
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+      volumes:
+        - name: mongo-data
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+
+---
+
