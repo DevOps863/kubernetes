@@ -33,6 +33,7 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 step5: Choose a network plugin for your cluster. In this example, we'll use Calico:
+curl -L https://github.com/projectcalico/calico/releases/download/v3.29.2/calicoctl-linux-amd64 -o calicoctl
 kubectl apply -f https://docs.projectcalico.org/v3.18/manifests/calico.yaml
 
 step6: Join Worker Nodes
