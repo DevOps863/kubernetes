@@ -22,7 +22,7 @@ sudo apt update
 sudo apt install -y kubelet kubeadm kubectl
 
 step 3: Initialize the Kubernetes Master Node
-On your master node, initialize the Kubernetes cluster using kubeadm. Replace MASTER_IP with the actual IP address of your master node.
+On your master node, initialize the Kubernetes cluster using kubeadm. Replace MASTER_IP with the actual private IP address of your master node.
 sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address=MASTER_IP
 After the initialization is complete, you will see a message with a kubeadm join command to add worker nodes to the cluster. Make sure to save this command for later use.
 
@@ -32,14 +32,37 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-step5: Choose a network plugin for your cluster. In this example, we'll use Calico:
-curl -L https://github.com/projectcalico/calico/releases/download/v3.29.2/calicoctl-linux-amd64 -o calicoctl
-kubectl apply -f https://docs.projectcalico.org/v3.18/manifests/calico.yaml
 
-step6: Join Worker Nodes
+step5: Join Worker Nodes
 On each worker node, run the kubeadm join command you saved from Step 4. It should look something like this:
 
 sudo kubeadm join MASTER_IP:6443 --token TOKEN --discovery-token-ca-cert-hash SHA256_HASH
+
+step6: Choose a network plugin for your cluster. In this example, we'll use Calico:
+url https://raw.githubusercontent.com/projectcalico/calico/v3.29.2/manifests/calico.yaml -O
+
+kubectl apply -f calico.yaml
+
+watch kubectl get nodes
+
+run command to check calico pods are running it will take some time to come up 5-7 mins: kubectl get pods -n kube-system
+
+[root@ip-172-31-20-103 ec2-user]# kubectl get pods -n kube-system
+NAME                                                    READY   STATUS             RESTARTS         AGE
+calico-kube-controllers-77969b7d87-z7g5g                0/1     CrashLoopBackOff   3 (29s ago)      7m25s
+calico-node-pjs9s                                       0/1     Running            1 (21s ago)      7m25s
+calico-node-qthsw                                       0/1     Running            0                7m25s
+calico-node-vvh2h                                       0/1     Running            1 (24s ago)      7m25s
+coredns-668d6bf9bc-88bnr                                1/1     Running            0                42m
+coredns-668d6bf9bc-dh4sd                                1/1     Running            1 (40s ago)      42m
+etcd-ip-172-31-20-103.ec2.internal                      1/1     Running            22 (102s ago)    36m
+kube-apiserver-ip-172-31-20-103.ec2.internal            1/1     Running            21 (3m15s ago)   42m
+kube-controller-manager-ip-172-31-20-103.ec2.internal   0/1     CrashLoopBackOff   22 (3s ago)      33m
+kube-proxy-p8bgf                                        1/1     Running            20 (92s ago)     42m
+kube-proxy-shn9d                                        0/1     CrashLoopBackOff   6 (3m40s ago)    18m
+kube-proxy-wf62f                                        0/1     CrashLoopBackOff   6 (4m27s ago)    18m
+kube-scheduler-ip-172-31-20-103.ec2.internal            1/1     Running            21 (87s ago)     41m
+
 
 step7: Step 8: Verify Cluster
 
