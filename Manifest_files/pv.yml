@@ -9,6 +9,6 @@ spec:
      - ReadWriteOnce # Access mode: can only be mounted by a single node at a time
    persistentVolumeReclaimPolicy: Retain 
    storageClassName: standard
-   hostpath:
-      path: /home/ubuntu/mongo/mongo-vol  # create the path before creating the PV.
+   hostPath:
+      path: /home/cloud_user/mongo/mongo-vol  # create the path before creating the PV.
   
