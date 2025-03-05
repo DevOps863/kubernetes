@@ -1,0 +1,14 @@
+Can you provide a Kubernetes Pod manifest that creates a Pod named firstpod running the httpd container on port 8080?
+
+apiVersion: v1
+kind: Pod
+metadata: 
+   name: firstpod
+   labels:
+      app: httpd_app
+spec:
+   containers:
+        - name: httpd-container
+          image: httpd:latest
+          ports:
+            - containerPort: 8080 
