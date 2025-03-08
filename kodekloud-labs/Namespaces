@@ -4,3 +4,24 @@ Name the pod dev-nginx-pod and use the nginx image with the latest tag. Ensure t
 To create namespace:
 kubectl create ns dev
 namespace/dev created
+
+pod.yml
+-------
+apiVersion: v1
+kind: Pod
+metadata: 
+    name: dev-nginx-pod 
+    namespace: dev 
+spec: 
+  containers:
+    - name: nginx 
+      image:  nginx:latest
+
+thor@jumphost ~$ kubectl apply -f pod.yaml 
+pod/dev-nginx-pod created
+thor@jumphost ~$ kubectl get pods
+No resources found in default namespace.
+thor@jumphost ~$ kubectl get pods -n dev
+NAME            READY   STATUS    RESTARTS   AGE
+dev-nginx-pod   1/1     Running   0          18s
+thor@jumphost ~$ 
