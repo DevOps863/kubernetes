@@ -1,0 +1,43 @@
+An application currently running on the Kubernetes cluster employs the nginx web server. The Nautilus application development team has introduced some recent changes that need deployment. They've crafted an image nginx:1.19 with the latest updates.
+
+
+Execute a rolling update for this application, integrating the nginx:1.19 image. The deployment is named nginx-deployment.
+
+Ensure all pods are operational post-update.
+
+
+Steps to follow:-
+---------------
+A Deployment's rollout is triggered if and only if the Deployment's Pod template (that is, .spec.template) is changed, for example if the labels or container images of the template are updated. 
+Other updates, such as scaling the Deployment, do not trigger a rollout.
+
+you can edit the Deployment and change .spec.template.spec.containers[0].image from nginx:1.16 to nginx:1.19:
+
+kubectl edit deployment/nginx-deployment
+
+change the image tag.
+
+The output is similar to:
+
+deployment.apps/nginx-deployment edited.
+
+To see the rollout status, run:
+
+kubectl rollout status deployment/nginx-deployment
+
+The output is similar to this:
+
+Waiting for rollout to finish: 2 out of 3 new replicas have been updated...
+or
+deployment "nginx-deployment" successfully rolled out
+
+Run kubectl get rs to see that the Deployment updated the Pods by creating a new ReplicaSet and scaling it up to 3 replicas, as well as scaling down the old ReplicaSet to 0 replicas.
+
+kubectl get rs
+
+To see about your deployments
+
+Run the below command
+
+kubectl describe deployments nginx-deployment
+
