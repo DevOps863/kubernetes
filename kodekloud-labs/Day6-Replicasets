@@ -1,0 +1,54 @@
+Create a ReplicaSet using httpd image with latest tag (ensure to specify as httpd:latest) and name it httpd-replicaset.
+
+
+Apply labels: app as httpd_app, type as front-end.
+
+
+Name the container httpd-container. Ensure the replica count is 4.
+
+A ReplicaSet's purpose is to maintain a stable set of replica Pods running at any given time. 
+Usually, you define a Deployment and let that Deployment manage ReplicaSets automatically.
+
+replica-set.yaml
+----------------
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: httpd-replicaset
+  labels:
+    app: httpd_app
+    type: front-end
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: httpd_app
+  template:
+    metadata:
+      labels:
+        app: httpd_app
+    spec:
+      containers:
+        - name: httpd-container
+          image: httpd:latest
+
+thor@jumphost ~$ vi replicat-set.yaml
+thor@jumphost ~$ kubectl apply -f replicat-set.yaml 
+replicaset.apps/httpd-replicaset created
+thor@jumphost ~$ kubectl get rs
+NAME               DESIRED   CURRENT   READY   AGE
+httpd-replicaset   3         3         0       8s
+thor@jumphost ~$ kubectl get rs -o wide
+NAME               DESIRED   CURRENT   READY   AGE   CONTAINERS        IMAGES         SELECTOR
+httpd-replicaset   3         3         3       18s   httpd-container   httpd:latest   app=httpd_app
+thor@jumphost ~$ kubectl get pods 
+NAME                     READY   STATUS    RESTARTS   AGE
+httpd-replicaset-4z62x   1/1     Running   0          51s
+httpd-replicaset-55z9j   1/1     Running   0          51s
+httpd-replicaset-8c4n7   1/1     Running   0          51s
+thor@jumphost ~$ kubectl get pods -o wide
+NAME                     READY   STATUS    RESTARTS   AGE   IP           NODE                      NOMINATED NODE   READINESS GATES
+httpd-replicaset-4z62x   1/1     Running   0          56s   10.244.0.7   kodekloud-control-plane   <none>           <none>
+httpd-replicaset-55z9j   1/1     Running   0          56s   10.244.0.6   kodekloud-control-plane   <none>           <none>
+httpd-replicaset-8c4n7   1/1     Running   0          56s   10.244.0.5   kodekloud-control-plane   <none>           <none>
+thor@jumphost ~$ 
