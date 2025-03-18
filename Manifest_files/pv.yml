@@ -10,5 +10,5 @@ spec:
    persistentVolumeReclaimPolicy: Retain 
    storageClassName: standard
    hostPath:
-      path: /home/cloud_user/mongo/mongo-vol  # create the path before creating the PV.
+      path: /root/mongo/mongo_vol  # create the path before creating the PV.
   
